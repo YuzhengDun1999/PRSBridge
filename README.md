@@ -1,5 +1,4 @@
 # PRS-Bridge
-=======
 
 PRS-Bridge is a python-based command line for developing polygenic risk score (PRS) under Bridge prior using GWAS summary statistics and external LD reference data.
 
