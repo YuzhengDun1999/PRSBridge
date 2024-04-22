@@ -1,0 +1,2 @@
+from .sparse_matrix import SparseDesignMatrix
+from .dense_matrix import DenseDesignMatrix
