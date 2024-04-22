@@ -1,6 +1,7 @@
-BayesBridge
+PRSBridge
 ===========
 
+PRSBridge for 
 Python package for Bayesian sparse regression, implementing the standard (Polya-Gamma augmented) Gibbs sampler as well as the CG-accelerated sampler of Nishimura and Suchard (2018). The latter algorithm can be orders of magnitudes faster for a large and sparse design matrix.
 
 Installation
