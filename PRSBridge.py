@@ -1,12 +1,10 @@
 import numpy as np
 import scipy as sp
-import matplotlib.pyplot as plt
 from bayesbridge.prsbridge import PrsBridge, RegressionCoefPrior
 from bayesbridge.model import PRSModel
 import pandas as pd
 import argparse
 import math
-import re
 import Data_process
 
 parser = argparse.ArgumentParser()
@@ -77,8 +75,10 @@ if h2 > 0 and h2_se > 0:
     log10_mean = math.log10(math.sqrt(tau2))
     log10_sd = 0.5 * h2_se * math.log10(math.e) / h2
     gscale_prior = {'log10_mean': log10_mean,'log10_sd': log10_sd}
+    beta_init = beta_init * math.sqrt(h2 / np.sum(beta_init ** 2)) * 10
 else:
     gscale_prior = None
+    beta_init = beta_init * 0.1
 
 model = PRSModel(beta_sum, ld_blk, sqrt_ld_blk, eigenval_blk, eigenvec_blk, np.mean(sample_size), blk_size, 0)
 
@@ -96,9 +96,6 @@ prior = RegressionCoefPrior(
 )
 
 bridge = PrsBridge(model, prior)
-
-mm = 0
-beta_init = beta_init * math.sqrt(h2 / np.sum(beta_init**2)) * 10
 
 n_burnin_input = 500
 n_iter_input = 800
@@ -127,21 +124,8 @@ coef = np.mean(coef_samples, axis=1)
 coef = coef * scale
 result_df['BETA'] = coef
 result_df.to_csv(output + '/coef.txt', sep='\t', index=False)
-plt.figure(figsize=(12, 5))
-plt.rcParams['font.size'] = 20
-
-plt.cla()
-plt.plot(samples['global_scale'])
-plt.savefig(output + '/samples_gscale.pdf')
-plt.cla()
-plt.semilogy(samples['global_scale'])
-plt.savefig(output + '/samples_log_gscale.pdf')
-plt.cla()
 
 time = pd.DataFrame({'time':[mcmc_info['runtime']]})
 print(mcmc_info['runtime'])
 time.to_csv(output + '/time.txt', index=0, header=0)
-if method=='cg':
-    np.savetxt(output + '/cg_ite.txt', mcmc_info['_reg_coef_sampling_info']['n_cg_iter'].astype(int), delimiter=',')
-
 
