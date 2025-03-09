@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+import scipy as sp
 import time
 from warnings import warn
 from .random import BasicRandom
@@ -46,7 +47,7 @@ class PrsBridge():
     def gibbs(self, n_iter, n_burnin=0, thin=1, seed=None,
               init={'global_scale': 0.1}, params_to_save=('coef', 'global_scale'),
               coef_sampler_type=None, n_status_update=0,
-              options=None, _add_iter_mode=False, max_iter=500):
+              options=None, _add_iter_mode=False, max_iter=500, update_alpha=True):
         """ Generate posterior samples under the specified model and prior.
 
         Parameters
@@ -136,6 +137,8 @@ class PrsBridge():
             self.initialize_chain(init, self.prior.bridge_exp)
 
         # Pre-allocate
+        if update_alpha == True:
+            alpha_iter = 0; alpha_burnin = 20; alpha_max_iter = 50; coef_tmp_samples = np.ones([alpha_max_iter - alpha_burnin, coef.shape[0]])
         samples = {}
         sampling_info = {}
         self.manager.pre_allocate(
@@ -180,6 +183,12 @@ class PrsBridge():
 
             lscale = self.update_local_scale(
                 gscale, coef[self.n_unshrunk:], self.prior.bridge_exp)
+
+            if update_alpha == True:
+                if (mcmc_iter < n_burnin) & (mcmc_iter > 200):
+                    coef_tmp_samples, alpha_iter = self.update_bridge_exp(
+                        alpha_iter, coef / gscale, coef_tmp_samples, alpha_burnin, alpha_max_iter
+                    )
 
             self.manager.store_current_state(
                 samples, mcmc_iter, n_burnin, thin, coef, lscale, gscale,
@@ -443,4 +452,35 @@ class PrsBridge():
             lscale[np.isinf(lscale)] = 2.0 / gscale
 
         return lscale
-    
+
+    def update_bridge_exp(self, alpha_iter, coef_tmp, coef_tmp_samples, alpha_burnin=20, alpha_max_iter=50):
+        alpha_iter = alpha_iter + 1
+        if alpha_iter < alpha_burnin:
+            return coef_tmp_samples, alpha_iter
+        elif alpha_iter < alpha_max_iter:
+            coef_tmp_samples[alpha_iter - alpha_burnin, :] = np.abs(coef_tmp)
+        elif alpha_iter == alpha_max_iter:
+            alpha_iter = 0
+            self.prior.bridge_exp = self.stochastic_gradient_descent(coef_tmp_samples, self.prior.bridge_exp)
+            coef_tmp_samples = np.ones([alpha_max_iter - alpha_burnin, coef_tmp.shape[0]])
+        return coef_tmp_samples, alpha_iter
+
+    def stochastic_gradient_descent(self, constant, starting_point=0.5, learning_rate=0.001, num_iterations=1000,
+                                    tol=0.001):
+        # constant: abs(\beta)/\tau
+        lower_bound = math.log(0.05)
+        upper_bound = math.log(1.5)
+        logalpha = math.log(starting_point)
+        for i in range(num_iterations):
+            alpha = math.exp(logalpha)
+            gradient = constant.shape[1] + constant.shape[1] * sp.special.digamma(1/alpha) * 1/alpha - np.sum(np.multiply(constant ** alpha, np.log(constant))) * alpha / constant.shape[0]
+            new_logalpha = logalpha + learning_rate * gradient
+            if new_logalpha < lower_bound:
+                new_logalpha = lower_bound
+            elif new_logalpha > upper_bound:
+                new_logalpha = upper_bound
+
+            if abs(math.exp(new_logalpha) - math.exp(logalpha)) < tol:
+                break
+            logalpha = new_logalpha
+        return math.exp(logalpha)
