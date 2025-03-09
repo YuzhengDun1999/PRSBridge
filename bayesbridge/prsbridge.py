@@ -468,19 +468,13 @@ class PrsBridge():
     def stochastic_gradient_descent(self, constant, starting_point=0.5, learning_rate=0.001, num_iterations=1000,
                                     tol=0.001):
         # constant: abs(\beta)/\tau
-        lower_bound = math.log(0.05)
-        upper_bound = math.log(1.5)
-        logalpha = math.log(starting_point)
-        for i in range(num_iterations):
-            alpha = math.exp(logalpha)
-            gradient = constant.shape[1] + constant.shape[1] * sp.special.digamma(1/alpha) * 1/alpha - np.sum(np.multiply(constant ** alpha, np.log(constant))) * alpha / constant.shape[0]
-            new_logalpha = logalpha + learning_rate * gradient
-            if new_logalpha < lower_bound:
-                new_logalpha = lower_bound
-            elif new_logalpha > upper_bound:
-                new_logalpha = upper_bound
+        alpha_values = np.arange(0.1, 0.5, 0.01)
+        gradients = []; alphas = []
+        for alpha in alpha_values:
+            gradient = (constant.shape[1] + constant.shape[1] * sp.special.digamma(1/alpha) * 1/alpha - np.sum(np.multiply(constant ** alpha, np.log(constant))) * alpha / constant.shape[0])
+            alphas.append(alpha)
+            gradients.append(gradient)
+        index = np.argmin(np.abs(gradients))
+        best_alpha = alphas[index]
 
-            if abs(math.exp(new_logalpha) - math.exp(logalpha)) < tol:
-                break
-            logalpha = new_logalpha
-        return math.exp(logalpha)
+        return best_alpha
