@@ -87,6 +87,9 @@ else:
     gscale_prior = None
     beta_init = beta_init * 0.1
 
+if update_alpha == True:
+    gscale_prior = None
+
 model = PRSModel(beta_sum, ld_blk, sqrt_ld_blk, eigenval_blk, eigenvec_blk, np.mean(sample_size), blk_size, 0)
 
 prior = RegressionCoefPrior(
