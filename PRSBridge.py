@@ -10,7 +10,7 @@ import Data_process
 parser = argparse.ArgumentParser()
 parser.add_argument('--percent', dest='percent_input', type=float, help='percent')
 parser.add_argument('--chr', dest='chr_input', type=int, help='chr')
-parser.add_argument('--alpha', dest='alpha_input', type=float, help='alpha')
+parser.add_argument('--alpha', dest='alpha_input', help='alpha')
 parser.add_argument('--ref', dest='ref_input', help='reference file location')
 parser.add_argument('--sumdat', dest='sumdat_input', help='sumdat file location')
 parser.add_argument('--h2', dest='h2', type=float, help='heritability')
@@ -27,6 +27,13 @@ h2 = args.h2
 h2_se = args.h2_se
 method = args.method
 output = args.output
+
+if alpha == 'auto':
+    update_alpha = True
+    alpha = 0.25
+else:
+    update_alpha = False
+    alpha = float(alpha)
 
 sumdat, SNP_list, A1_list, A2_list = Data_process.parse_sumstats(ref + str(chr), sumdat_file)
 n_blk = len(sumdat)
@@ -108,15 +115,19 @@ if alpha == 0.125:
 
 #n_burnin_input = 0
 #n_iter_input = 1000
+if update_alpha == True:
+    params_to_save_mcmc = (('coef', 'global_scale', 'alpha'))
+elif update_alpha == False:
+    params_to_save_mcmc = (('coef', 'global_scale'))
 
 samples, mcmc_info = bridge.gibbs(
    n_iter=n_iter_input, n_burnin=n_burnin_input, thin=1,
     #init={'global_scale': 0.01, 'coef': beta_init,'local_scale': lscale_init},
     #init={'global_scale': 0.01},
     init={'coef': beta_init},
-    params_to_save=(('coef', 'global_scale')),
+    params_to_save=params_to_save_mcmc,
     coef_sampler_type=method,
-    seed=111, max_iter=2000
+    seed=111, max_iter=2000, update_alpha=update_alpha
 )
 coef_samples = samples['coef']  # Extract all but the intercept
 
@@ -124,6 +135,9 @@ coef = np.mean(coef_samples, axis=1)
 coef = coef * scale
 result_df['BETA'] = coef
 result_df.to_csv(output + '/coef.txt', sep='\t', index=False)
+if update_alpha == True:
+    alpha_df = pd.DataFrame({'alpha': samples['alpha']})
+    alpha_df.to_csv(output + '/alpha.txt', index=0, header=0)
 
 time = pd.DataFrame({'time':[mcmc_info['runtime']]})
 print(mcmc_info['runtime'])

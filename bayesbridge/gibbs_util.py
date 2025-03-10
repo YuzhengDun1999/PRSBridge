@@ -101,6 +101,9 @@ class MarkovChainManager():
         if 'obs_prec' in params_to_save:
             samples['obs_prec'] = np.zeros(n_sample)
 
+        if 'alpha' in params_to_save:
+            samples['alpha'] = np.zeros(n_sample)
+
         if 'logp' in params_to_save:
             samples['logp'] = np.zeros(n_sample)
 
@@ -126,7 +129,7 @@ class MarkovChainManager():
 
     def store_current_state(
             self, samples, mcmc_iter, n_burnin, thin, coef, lscale,
-            gscale, obs_prec, params_to_save):
+            gscale, alpha, obs_prec, params_to_save):
 
         if mcmc_iter <= n_burnin or (mcmc_iter - n_burnin) % thin != 0:
             return
@@ -144,6 +147,9 @@ class MarkovChainManager():
 
         if 'obs_prec' in params_to_save:
             samples['obs_prec'][index] = obs_prec
+
+        if 'alpha' in params_to_save:
+            samples['alpha'][index] = alpha
 
         if 'logp' in params_to_save:
             samples['logp'][index] = logp

@@ -192,7 +192,7 @@ class PrsBridge():
 
             self.manager.store_current_state(
                 samples, mcmc_iter, n_burnin, thin, coef, lscale, gscale,
-                obs_prec, params_to_save
+                self.prior.bridge_exp, obs_prec, params_to_save
             )
             self.manager.store_sampling_info(
                 sampling_info, info, mcmc_iter, n_burnin, thin,
