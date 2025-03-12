@@ -115,7 +115,9 @@ if alpha == 0.0625:
 if alpha == 0.125:
     n_burnin_input = 600
     n_iter_input = 1000
-
+if update_alpha == True:
+    n_burnin_input = 900
+    n_iter_input = 1200
 #n_burnin_input = 0
 #n_iter_input = 1000
 if update_alpha == True:

@@ -185,7 +185,7 @@ class PrsBridge():
                 gscale, coef[self.n_unshrunk:], self.prior.bridge_exp)
 
             if update_alpha == True:
-                if (mcmc_iter < n_burnin) & (mcmc_iter > 200):
+                if (mcmc_iter < n_burnin) & (mcmc_iter > 100):
                     coef_tmp_samples, alpha_iter = self.update_bridge_exp(
                         alpha_iter, coef / gscale, coef_tmp_samples, alpha_burnin, alpha_max_iter
                     )
@@ -465,16 +465,18 @@ class PrsBridge():
             coef_tmp_samples = np.ones([alpha_max_iter - alpha_burnin, coef_tmp.shape[0]])
         return coef_tmp_samples, alpha_iter
 
-    def stochastic_gradient_descent(self, constant, starting_point=0.5, learning_rate=0.001, num_iterations=1000,
-                                    tol=0.001):
+    def stochastic_gradient_descent(self, constant, starting_point=0.5, learning_rate=0.001):
         # constant: abs(\beta)/\tau
-        alpha_values = np.arange(0.1, 0.5, 0.01)
-        gradients = []; alphas = []
-        for alpha in alpha_values:
-            gradient = (constant.shape[1] + constant.shape[1] * sp.special.digamma(1/alpha) * 1/alpha - np.sum(np.multiply(constant ** alpha, np.log(constant))) * alpha / constant.shape[0])
-            alphas.append(alpha)
-            gradients.append(gradient)
-        index = np.argmin(np.abs(gradients))
-        best_alpha = alphas[index]
-
-        return best_alpha
+        lower_bound = math.log(0.05)
+        upper_bound = math.log(1.5)
+        logalpha = math.log(starting_point)
+        alpha = math.exp(logalpha)
+        gradient = constant.shape[1] + constant.shape[1] * sp.special.digamma(1 / alpha) * 1 / alpha - np.sum(
+            np.multiply(constant ** alpha, np.log(constant))) * alpha / constant.shape[0]
+        new_logalpha = logalpha + learning_rate * gradient
+        if new_logalpha < lower_bound:
+            new_logalpha = lower_bound
+        elif new_logalpha > upper_bound:
+            new_logalpha = upper_bound
+        print(math.exp(new_logalpha))
+        return math.exp(new_logalpha)
