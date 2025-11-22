@@ -8,8 +8,8 @@ PRS-Bridge is a python-based command line for developing polygenic risk score (P
     `git clone https://github.com/YuzhengDun1999/PRSBridge.git`
  - Build Cython files from the root directory with:
     `~~python setup.py build_ext --inplace`
- -~~ Download LD reference data
-  To be uploaded
+ - Estimate LD reference data
+    `LD matrix is large to store. Users can use get_ld.py to estimate ld by themselves or email authors to get LD matrix.`
 
 ## Using PRS-Bridge
 `
