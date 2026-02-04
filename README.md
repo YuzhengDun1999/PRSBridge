@@ -8,8 +8,8 @@ PRS-Bridge is a python-based command line for developing polygenic risk score (P
     `git clone https://github.com/YuzhengDun1999/PRSBridge.git`
  - Build Cython files from the root directory with:
     `~~python setup.py build_ext --inplace`
- - Estimate LD reference data
-    `LD matrix is large to store. Users can use get_ld.py to estimate ld by themselves or email authors to get LD matrix.`
+ - Estimate LD reference data:
+    LD matrix is large to store. Users can use get_ld.py to estimate ld with different block structures by themselves or email authors to get LD matrix. Example usage is `python get_ld.py --bfile path_to_block_bfile`. For LD matrix with small block size, we use the same block partition as https://bitbucket.org/nygcresearch/ldetect-data/src/master/EUR/. For LD matrix with large block size, we use the same block partition as `snp_ldsplit` in package `bigsnpr` using default parameters.
 
 ## Using PRS-Bridge
 `
