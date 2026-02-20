@@ -10,11 +10,12 @@ PRS-Bridge is a python-based command line for developing polygenic risk score (P
  - Build Cython files from the root directory with:
     `~~python setup.py build_ext --inplace`
  - Download LD reference data: For general usage of our method, we suggest to download and use the following LD reference data for EUR:
-[1000 Genomes Small Block](https://zenodo.org/records/18706275); `tar -zxvf ref_1kg.tar.gz`
-[UK Biobank Large Block](https://zenodo.org/records/18706275); `tar -zxvf ref_ukbb_large.tar.gz`
-To fully reproduce our results in manuscript, please also download the following LD reference data:
-[1000 Genomes Large Block](https://zenodo.org/records/18673493); `tar -zxvf ref_1kg_large.tar.gz`
-[UK Biobank Small Block](https://zenodo.org/records/18673493 "AFR reference"); `tar -zxvf ref_ukbb.tar.gz`
+	- [1000 Genomes Small Block](https://zenodo.org/records/18706275); `tar -zxvf ref_1kg.tar.gz`
+	- [UK Biobank Large Block](https://zenodo.org/records/18706275); `tar -zxvf ref_ukbb_large.tar.gz`
+	
+	To fully reproduce our results in the manuscript, please also download the following LD reference data:
+	- [1000 Genomes Large Block](https://zenodo.org/records/18673493); `tar -zxvf ref_1kg_large.tar.gz`
+	- [UK Biobank Small Block](https://zenodo.org/records/18673493 "AFR reference"); `tar -zxvf ref_ukbb.tar.gz`
  - Estimate LD reference data (Optional):
  We also provide code for users who want to construct their own LD reference panel. Users can specify custom LD block sizes and partition the individual-level genotype data into corresponding blocks. The LD matrix for each block can then be estimated using `get_ld.py`. Example usage is `python get_ld.py --bfile PATH_TO_BLOCK_BFILE`. Here, `PATH_TO_BLOCK_BFILE` should point to the PLINK binary file (`.bed/.bim/.fam`) corresponding to a single LD block.
  
