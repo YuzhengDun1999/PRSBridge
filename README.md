@@ -63,4 +63,4 @@ Please direct any problems or questions to Yuzheng Dun (ydun2@jhu.edu).
 
 ## Citation
 
-Dun, Yuzheng, et al. "A Robust Bayesian Method for Building Polygenic Risk Scores using Projected Summary Statistics and Bridge Prior." arXiv preprint arXiv:2401.15014 (2024). (https://arxiv.org/abs/2401.15014)
+Dun, Y., Chatterjee, N., Jin, J., & Nishimura, A. (2026). Constructing Genetic Risk Scores: Robust Bayesian Approach through Projected Summary Statistics and Flexible Shrinkage. Journal of the American Statistical Association, 1–12. https://doi.org/10.1080/01621459.2026.2663587
