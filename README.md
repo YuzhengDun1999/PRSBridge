@@ -3,13 +3,13 @@
 # PRS-Bridge
 
 
-PRS-Bridge is a python-based command line for developing polygenic risk score (PRS) under Bridge prior using GWAS summary statistics and external LD reference data.
+PRS-Bridge is a python-based command line tool for developing polygenic risk score (PRS) under Bridge prior using GWAS summary statistics and external LD reference data.
 
 ## Getting Started
  - Download or clone this GitHub repository by:
     `git clone https://github.com/YuzhengDun1999/PRSBridge.git`
  - Build Cython files from the root directory with:
-    `~~python setup.py build_ext --inplace`
+    `python setup.py build_ext --inplace`
  - Download EUR LD reference data: For general usage of our method, we suggest to download and use the following LD reference data for EUR:
 	- [1000 Genomes Small Block](https://zenodo.org/records/18706275); `tar -zxvf ref_1kg.tar.gz`
 	- [UK Biobank Large Block](https://zenodo.org/records/18706275); `tar -zxvf ref_ukbb_large.tar.gz`
