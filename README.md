@@ -57,7 +57,7 @@ python PRSBridge.py --percent 0.2 --chr 22 --alpha 0.125 --ref path_to_ref/chr -
 `
 ## Support
 
-Please direct any problems or questions to Yuzheng Dun (ydun2@jhu.edu).
+Please direct any problems or questions to Yuzheng Dun (ydun@fredhutch.org).
 
   
 
